@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML Form Example</title>
+</head>
+<body>
+
+<h2>Example Form</h2>
+
+<form id="myForm">
+    <label for="name">Name:</label><br>
+    <input type="text" id="name" name="name" value=""><br><br>
+    
+    <label for="sal">Sal:</label><br>
+    <input type="number" id="sal" name="sal" value=""><br><br>
+
+    <label for="job">Job:</label><br>
+    <input type="text" id="job" name="email" value=""><br><br>
+
+
+    <input type="button" value="Submit" onclick="submitForm()">
+</form>
+
+    <label for="getjob">Job:</label><br>
+    <input type="text" id="getjob" name="job" value=""><br><br>
+
+
+    <input type="button" value="Submit" onclick="getData()">
+
+    <label for="message">Message:</label><br>
+    <textarea id="message" name="message" rows="4" cols="50" value=""></textarea><br><br>
+
+
+<script>
+function submitForm() {
+    var name = document.getElementById("name").value;
+    var sal = document.getElementById("sal").value;
+    var job = document.getElementById("job").value;
+
+    var formData = { name, sal, job };
+    var jsonData = JSON.stringify(formData);
+
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === XMLHttpRequest.DONE) {
+            if (xhr.status === 200) {
+                console.log("Form submitted successfully!");
+            } else {
+                console.error("Error submitting form");
+            }
+        }
+    };
+    
+    xhr.open("POST", "http://localhost:5000/submit");
+    xhr.setRequestHeader('Content-Type', 'application/json'); // Set the content type header
+    xhr.send(jsonData);
+}
+
+
+function getData() {
+    var getjob = document.getElementById("getjob").value;
+
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === XMLHttpRequest.DONE) {
+            if (xhr.status === 200) {
+                console.log(xhr.responseText);
+                document.getElementById('message').value=xhr?.responseText;
+            } else {
+                console.error("Error getting data");
+            }
+        }
+    };
+
+    // Construct the URL with the 'getjob' parameter
+    var url = "http://localhost:5000/users?getjob=" + encodeURIComponent(getjob);
+
+    // Open a GET request with the constructed URL
+    xhr.open("GET", url);
+
+    // No need to set Content-Type for GET requests
+    // xhr.setRequestHeader('Content-Type', 'application/json');
+
+    // Send the request
+    xhr.send();
+}
+
+</script>
+
+</body>
+</html>
