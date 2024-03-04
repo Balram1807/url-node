@@ -1,33 +1,32 @@
-const sql = require('mssql');
+// Require the mysql package
+const mysql = require('mysql');
 
-// Config object for connecting to the database with Windows authentication
-const config = {
-    server: 'localhost',
-    database: 'CarDispensary',
-    options: {
-        trustedConnection: true // Use Windows authentication
-    }
-};
+// Create a connection to the MySQL database
+const connection = mysql.createConnection({
+  host: 'localhost',
+  user: 'root',
+  password: 'manager',
+  database: 'balram'
+});
 
-// Function to execute a query
-async function executeQuery() {
-    try {
-        // Create a new pool with the specified configuration
-        const pool = await sql.connect(config);
+// Connect to the database
+connection.connect((err) => {
+  if (err) {
+    console.error('Error connecting to MySQL database:', err);
+    return;
+  }
+  console.log('Connected to MySQL database!');
+});
 
-        // Query database
-        const result = await pool.request().query('SELECT * FROM Customer');
+// Perform a simple query
+connection.query('SELECT * FROM EMP', (err, rows) => {
+  if (err) {
+    console.error('Error executing query:', err);
+    return;
+  }
+  console.log('Data received from MySQL:');
+  console.log(rows);
+});
 
-        // Log the result
-        console.log(result.recordset);
-
-        // Close the pool
-        await pool.close();
-    } catch (err) {
-        // Log any errors
-        console.error('SQL error', err);
-    }
-}
-
-// Call the function to execute the query
-executeQuery();
+// Close the connection when done
+connection.end();
